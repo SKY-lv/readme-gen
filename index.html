@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReadmeGen - GitHub README 一键生成器</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:#0d1117;color:#c9d1d9;min-height:100vh;}
+.hero{text-align:center;padding:48px 20px 32px;background:linear-gradient(135deg,#161b22,#0d1117);border-bottom:1px solid #30363d;}
+.hero h1{font-size:2.2em;color:#f0f6fc;margin-bottom:8px;}.hero h1 span{color:#a371f7;}
+.hero p{color:#8b949e;}
+.badge{display:inline-block;background:#8957e5;color:#fff;font-size:0.78em;padding:3px 10px;border-radius:20px;margin-top:10px;}
+.container{max-width:800px;margin:0 auto;padding:24px;}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:22px;margin-bottom:18px;}
+.card h2{color:#f0f6fc;font-size:1.05em;margin-bottom:14px;border-left:3px solid #a371f7;padding-left:10px;}
+input,textarea,select{width:100%;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#c9d1d9;padding:10px;font-size:0.95em;margin:6px 0;}
+textarea{min-height:80px;font-family:'Courier New',monospace;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#a371f7;}
+label{display:block;font-size:0.82em;color:#8b949e;margin-top:10px;}
+.checkbox-row{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0;}
+.checkbox-row label{display:flex;align-items:center;gap:6px;font-size:0.85em;color:#c9d1d9;cursor:pointer;}
+.checkbox-row input[type=checkbox]{width:auto;margin:0;}
+.output{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:16px;font-family:'Courier New',monospace;font-size:0.85em;line-height:1.6;color:#c9d1d9;white-space:pre-wrap;min-height:200px;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+.btn{padding:10px 18px;border:none;border-radius:8px;cursor:pointer;font-size:0.85em;font-weight:500;}
+.btn-primary{background:#8957e5;color:#fff;}.btn-primary:hover{background:#7c3aed;}
+.btn-secondary{background:#21262d;color:#c9d1d9;border:1px solid #30363d;}.btn-secondary:hover{background:#30363d;}
+.status{position:fixed;bottom:18px;right:18px;background:#238636;color:#fff;padding:9px 18px;border-radius:8px;font-size:0.85em;opacity:0;transition:opacity 0.3s;z-index:999;}
+.status.show{opacity:1;}
+.preview-box{background:#fff;border-radius:8px;padding:20px;margin-top:14px;}
+.preview-box h1{color:#24292f;font-size:1.6em;border-bottom:1px solid #d0d7de;padding-bottom:8px;}
+.preview-box h2{color:#24292f;font-size:1.3em;margin-top:16px;}
+.preview-box p{color:#24292f;line-height:1.6;}
+.preview-box code{background:#f6f8fa;padding:2px 6px;border-radius:4px;font-family:'Courier New',monospace;font-size:0.9em;}
+.preview-box pre{background:#f6f8fa;padding:12px;border-radius:6px;overflow-x:auto;}
+.preview-box ul{margin-left:20px;}
+.preview-box li{color:#24292f;margin:4px 0;}
+.tabs{display:flex;gap:0;border-bottom:1px solid #30363d;margin-bottom:16px;}
+.tab{padding:8px 16px;cursor:pointer;font-size:0.88em;color:#8b949e;border-bottom:2px solid transparent;}
+.tab.active{color:#a371f7;border-bottom-color:#a371f7;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+footer{text-align:center;padding:28px;color:#6e7681;font-size:0.8em;border-top:1px solid #21262d;margin-top:20px;}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>Readme<span>Gen</span></h1>
+  <p>GitHub README 一键生成器 · 专业模板 · 实时预览</p>
+  <span class="badge">✓ 免费 · 支持 Markdown 预览</span>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h2>📋 项目信息</h2>
+    <label>项目名称</label>
+    <input type="text" id="p-name" placeholder="my-awesome-project" oninput="generate()">
+    <label>一句话描述</label>
+    <input type="text" id="p-desc" placeholder="一个强大的XXX工具，用于解决YYY问题" oninput="generate()">
+    <label>技术栈 (逗号分隔)</label>
+    <input type="text" id="p-stack" placeholder="Python, React, Node.js" oninput="generate()">
+    <label>安装命令</label>
+    <input type="text" id="p-install" placeholder="pip install my-package" oninput="generate()">
+    <label>快速开始代码</label>
+    <textarea id="p-usage" placeholder="import my_package
+my_package.run()" oninput="generate()"></textarea>
+    
+    <label>功能特性 (每行一个)</label>
+    <textarea id="p-features" placeholder="✨ 特性1
+🚀 特性2
+💡 特性3" oninput="generate()"></textarea>
+    
+    <label>截图/GIF URL (可选)</label>
+    <input type="text" id="p-screenshot" placeholder="https://i.imgur.com/xxx.gif" oninput="generate()">
+    
+    <div class="checkbox-row">
+      <label><input type="checkbox" id="opt-badge" checked onchange="generate()"> 添加徽章</label>
+      <label><input type="checkbox" id="opt-toc" checked onchange="generate()"> 目录</label>
+      <label><input type="checkbox" id="opt-contrib" onchange="generate()"> 贡献指南</label>
+      <label><input type="checkbox" id="opt-license" checked onchange="generate()"> License</label>
+      <label><input type="checkbox" id="opt-changelog" onchange="generate()"> 更新日志</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('code')">📄 Markdown 代码</div>
+      <div class="tab" onclick="switchTab('preview')">👁️ 预览</div>
+    </div>
+    <div class="tab-panel active" id="tab-code">
+      <div class="output" id="output"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="copyMd()">📋 复制 Markdown</button>
+        <button class="btn btn-secondary" onclick="downloadMd()">💾 下载 README.md</button>
+      </div>
+    </div>
+    <div class="tab-panel" id="tab-preview">
+      <div class="preview-box" id="preview"></div>
+    </div>
+  </div>
+</div>
+
+<footer>ReadmeGen · 免费 · 开源项目必备</footer>
+<div class="status" id="status"></div>
+
+<script>
+function showS(m){const e=document.getElementById('status');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2000);}
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['code','preview'][i]===t));
+  document.querySelectorAll('.tab-panel').forEach((el,i)=>el.classList.toggle('active',['tab-code','tab-preview'][i]==='tab-'+t));
+}
+
+function generate(){
+  const name = document.getElementById('p-name').value || 'project-name';
+  const desc = document.getElementById('p-desc').value || 'A powerful tool for solving problems.';
+  const stack = document.getElementById('p-stack').value.split(',').map(s=>s.trim()).filter(s=>s);
+  const install = document.getElementById('p-install').value || `npm install ${name}`;
+  const usage = document.getElementById('p-usage').value || `import ${name}\n${name}.run()`;
+  const features = document.getElementById('p-features').value.split('\n').filter(f=>f.trim());
+  const screenshot = document.getElementById('p-screenshot').value;
+  
+  const optBadge = document.getElementById('opt-badge').checked;
+  const optToc = document.getElementById('opt-toc').checked;
+  const optContrib = document.getElementById('opt-contrib').checked;
+  const optLicense = document.getElementById('opt-license').checked;
+  const optChangelog = document.getElementById('opt-changelog').checked;
+  
+  let md = '';
+  
+  // Title
+  md += `# ${name}\n\n`;
+  md += `${desc}\n\n`;
+  
+  // Badges
+  if (optBadge && stack.length) {
+    md += stack.map(s => `![${s}](https://img.shields.io/badge/${encodeURIComponent(s)}-blue)`).join(' ') + '\n\n';
+  }
+  
+  // Screenshot
+  if (screenshot) {
+    md += `![Screenshot](${screenshot})\n\n`;
+  }
+  
+  // TOC
+  if (optToc) {
+    md += `## 📑 Table of Contents\n\n`;
+    md += `- [Features](#-features)\n`;
+    md += `- [Installation](#-installation)\n`;
+    md += `- [Usage](#-usage)\n`;
+    if (optContrib) md += `- [Contributing](#-contributing)\n`;
+    if (optChangelog) md += `- [Changelog](#-changelog)\n`;
+    if (optLicense) md += `- [License](#-license)\n`;
+    md += '\n';
+  }
+  
+  // Features
+  if (features.length) {
+    md += `## ✨ Features\n\n`;
+    md += features.map(f => `- ${f}`).join('\n') + '\n\n';
+  }
+  
+  // Installation
+  md += `## 📦 Installation\n\n`;
+  md += `\`\`\`bash\n${install}\n\`\`\`\n\n`;
+  
+  // Usage
+  md += `## 🚀 Usage\n\n`;
+  md += `\`\`\`${stack[0]?.toLowerCase() || 'python'}\n${usage}\n\`\`\`\n\n`;
+  
+  // Contributing
+  if (optContrib) {
+    md += `## 🤝 Contributing\n\n`;
+    md += `Contributions are welcome! Please feel free to submit a Pull Request.\n\n`;
+    md += `1. Fork the repository\n`;
+    md += `2. Create your feature branch (\`git checkout -b feature/AmazingFeature\`)\n`;
+    md += `3. Commit your changes (\`git commit -m 'Add some AmazingFeature'\`)\n`;
+    md += `4. Push to the branch (\`git push origin feature/AmazingFeature\`)\n`;
+    md += `5. Open a Pull Request\n\n`;
+  }
+  
+  // Changelog
+  if (optChangelog) {
+    md += `## 📝 Changelog\n\n`;
+    md += `### v1.0.0\n- Initial release\n\n`;
+  }
+  
+  // License
+  if (optLicense) {
+    md += `## 📄 License\n\n`;
+    md += `This project is licensed under the MIT License.\n`;
+  }
+  
+  document.getElementById('output').textContent = md;
+  document.getElementById('preview').innerHTML = renderMarkdown(md);
+}
+
+function renderMarkdown(md){
+  // Simple markdown renderer
+  let html = md
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>')
+    .replace(/```(\w+)?\n([\s\S]+?)```/g, '<pre><code>$2</code></pre>')
+    .replace(/!\[(.+?)\]\((.+?)\)/g, '<img alt="$1" src="$2" style="max-width:100%">')
+    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" style="color:#0969da">$1</a>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.+<\/li>\n?)+/g, '<ul>$&</ul>')
+    .replace(/\n\n/g, '<br>');
+  return html;
+}
+
+function copyMd(){
+  const md = document.getElementById('output').textContent;
+  navigator.clipboard.writeText(md).then(()=>showS('✅ 已复制'));
+}
+
+function downloadMd(){
+  const md = document.getElementById('output').textContent;
+  const blob = new Blob([md], {type:'text/markdown'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'README.md';
+  a.click();
+}
+
+// Init
+generate();
+</script>
+</body>
+</html>
